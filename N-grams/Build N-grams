@@ -1,0 +1,99 @@
+---
+title: "Build N-grams"
+author: "A. Rodríguez"
+date: "31/1/2021"
+output: html_document
+---
+
+```{r download}
+URL <- "https://d396qusza40orc.cloudfront.net/dsscapstone/dataset/Coursera-SwiftKey.zip"
+download.file(URL, "./Capstone Dataset.zip")
+unzip("./Capstone Dataset.zip", exdir = "./Capstone Project")
+```
+
+```{r load}
+Blog_file <- file("./Capstone Project/final/en_US/en_US.blogs.txt")
+Twitter_file <- file("./Capstone Project/final/en_US/en_US.twitter.txt")
+News_file <- file("./Capstone Project/final/en_US/en_US.news.txt")
+Blog <- readLines(Blog_file)
+Twitter <- readLines(Twitter_file)
+News <- readLines(News_file) ###Use default settings
+close(Blog_file)
+close(Twitter_file)
+close(News_file)
+```
+
+```{r sample}
+set.seed(12345)
+Blog_sample <- sample(Blog, length(Blog)*0.03)
+Twitter_sample <- sample(Twitter, length(Twitter)*0.03)
+News_sample <- sample(News, length(News)*0.03)
+Total_sample <- c(Blog_sample, Twitter_sample, News_sample)
+Corpus <- iconv(Total_sample, from = "UTF-8", to = "ASCII", sub = "")
+```
+
+```{r clean}
+library(tm)
+Corpus <- VCorpus(VectorSource(Corpus))
+Corpus <- tm_map(Corpus, content_transformer(tolower))
+Corpus <- tm_map(Corpus, removePunctuation)
+Corpus <- tm_map(Corpus, removeNumbers)
+Corpus <- tm_map(Corpus, removeWords, stopwords("english"))
+Corpus <- tm_map(Corpus, stripWhitespace)
+Corpus <- tm_map(Corpus, PlainTextDocument)
+```
+
+```{r tokenize}
+library(RWeka)
+library(tm)
+unigram <- function(x) NGramTokenizer(x, Weka_control(min = 1, max = 1))
+unigram_tdm <- TermDocumentMatrix(Corpus, control = list(tokenize = unigram))
+
+bigram <- function(x) NGramTokenizer(x, Weka_control(min = 2, max = 2))
+bigram_tdm <- TermDocumentMatrix(Corpus, control = list(tokenize = bigram))
+
+trigram <- function(x) NGramTokenizer(x, Weka_control(min = 3, max = 3))
+trigram_tdm <- TermDocumentMatrix(Corpus, control = list(tokenize = trigram))
+
+quadgram <- function(x) NGramTokenizer(x, Weka_control(min = 4, max = 4))
+quadgram_tdm <- TermDocumentMatrix(Corpus, control = list(tokenize = quadgram))
+```
+
+```{r 1-gram}
+library(data.table)
+fFT1 <- findFreqTerms(unigram_tdm, lowfreq = 30)
+tfreq1 <- rowSums(as.matrix(unigram_tdm[fFT1,]))
+tfreq1 <- data.frame(unigram=names(tfreq1), frequency=tfreq1)
+tfreq1 <- tfreq1[order(-tfreq1$frequency),]
+uni_list <- setDT(tfreq1)
+save(uni_list, file = "unigram.Rda")
+```
+
+```{r 2-gram}
+library(data.table)
+fFT2 <- findFreqTerms(bigram_tdm, lowfreq = 30)
+tfreq2 <- rowSums(as.matrix(bigram_tdm[fFT2,]))
+tfreq2 <- data.frame(bigram=names(tfreq2), frequency=tfreq2)
+tfreq2 <- tfreq2[order(-tfreq2$frequency),]
+bi_list <- setDT(tfreq2)
+save(bi_list, file = "bigram.Rda")
+```
+
+```{r 3-gram}
+library(data.table)
+fFT3 <- findFreqTerms(trigram_tdm, lowfreq = 5)
+tfreq3 <- rowSums(as.matrix(trigram_tdm[fFT3,]))
+tfreq3 <- data.frame(trigram=names(tfreq3), frequency=tfreq3)
+tfreq3 <- tfreq3[order(-tfreq3$frequency),]
+tri_list <- setDT(tfreq3)
+save(tri_list, file = "trigram.Rda")
+```
+
+```{r 4-gram}
+library(data.table)
+fFT4 <- findFreqTerms(quadgram_tdm, lowfreq = 5)
+tfreq4 <- rowSums(as.matrix(quadgram_tdm[fFT4,]))
+tfreq4 <- data.frame(quadgram=names(tfreq4), frequency=tfreq4)
+tfreq4 <- tfreq4[order(-tfreq4$frequency),]
+quad_list <- setDT(tfreq4)
+save(quad_list, file = "quadgram.Rda")
