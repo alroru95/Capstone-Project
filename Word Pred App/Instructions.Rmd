@@ -1,0 +1,21 @@
+---
+title: ""
+author: ""
+date: ""
+output: html_document
+---
+
+
+## Overview
+
+Next Word Predictor Application suggests the most probable word after entering a word. Only words in English are allowed.
+
+## Instructions
+
+- Enter a word or phrase, in English, into the textbox titled "Input".
+
+- Wait a split second.
+
+- A "suggested next word" will appear below the textbox.
+
+- The word or phrase entered will appear below the "suggested next word".
