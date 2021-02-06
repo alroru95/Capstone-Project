@@ -1,0 +1,32 @@
+---
+title: "Next Word Predictor App: Miscellanea"
+author: "A. Rodríguez"
+date: "6/2/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## This app was build by using:
+
+- [The R Project for Statistical Computing](https://www.r-project.org/).
+
+- [RStudio](https://www.rstudio.com/).
+
+- [Shiny](https://shiny.rstudio.com/reference/shiny/).
+
+
+## References:
+
+- [Text Mining Infrastructure in R](https://www.jstatsoft.org/article/view/v025i050).
+
+- [CRAN Task View: Natural Language Processing](https://cran.r-project.org/web/views/NaturalLanguageProcessing.html).
+
+- Other sources (such as [RDocumentation](https://www.rdocumentation.org/)).
+
+
+## More information:
+
+- Further information about how was this app built can be seen [here](https://rpubs.com/alroru95/722044).
